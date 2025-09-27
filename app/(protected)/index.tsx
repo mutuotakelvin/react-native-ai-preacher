@@ -9,7 +9,7 @@ export default function Index() {
         alignItems: "center",
       }}
     >
-      <Text>AI Preacher</Text>
+      <Text>Home Screen</Text>
     </View>
   );
 }
