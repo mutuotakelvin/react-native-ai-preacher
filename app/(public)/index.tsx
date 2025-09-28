@@ -1,7 +1,8 @@
 import SignIn from "@/components/clerk/SignIn";
+import { useAuth } from "@clerk/clerk-expo";
 
 export default function Index() {
-  return (
-    <SignIn scheme="aipreacher" signUpUrl="/sign-up" homeUrl="(protected)" />
-  );
+  const { isSignedIn, isLoaded } = useAuth();
+
+  return <SignIn scheme="aipreacher" signUpUrl="(protected)" homeUrl="(protected)" />
 }

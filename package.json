@@ -12,11 +12,15 @@
   },
   "dependencies": {
     "@clerk/clerk-expo": "^2.15.3",
+    "@elevenlabs/react-native": "^0.3.1",
     "@expo/metro-runtime": "~6.1.2",
     "@expo/vector-icons": "^15.0.2",
+    "@livekit/react-native": "^2.9.1",
+    "@livekit/react-native-webrtc": "^137.0.2",
     "@react-navigation/bottom-tabs": "^7.4.0",
     "@react-navigation/elements": "^2.6.3",
     "@react-navigation/native": "^7.1.8",
+    "@shopify/react-native-skia": "^2.2.20",
     "expo": "~54.0.10",
     "expo-constants": "~18.0.9",
     "expo-dev-client": "~6.0.12",
@@ -32,6 +36,7 @@
     "expo-symbols": "~1.0.7",
     "expo-system-ui": "~6.0.7",
     "expo-web-browser": "~15.0.7",
+    "livekit-client": "^2.15.7",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-native": "0.81.4",
@@ -43,6 +48,8 @@
     "react-native-worklets": "0.5.1"
   },
   "devDependencies": {
+    "@config-plugins/react-native-webrtc": "^13.0.0",
+    "@livekit/react-native-expo-plugin": "^1.0.1",
     "@types/react": "~19.1.0",
     "eslint": "^9.25.0",
     "eslint-config-expo": "~10.0.0",

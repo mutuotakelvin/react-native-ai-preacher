@@ -4,7 +4,7 @@ import React, { useMemo } from "react";
 import { Image, Platform, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 // Safely import expo modules
-let WebBrowser: any = { maybeCompleteAuthSession: () => {}, warmUpAsync: () => {}, coolDownAsync: () => {} };
+let WebBrowser: any = { maybeCompleteAuthSession: () => {} };
 let Linking: any = { createURL: () => "" };
 
 try {
@@ -22,7 +22,6 @@ try {
 // Safely initialize WebBrowser
 let webBrowserAvailable = false;
 try {
-  // Only try to initialize WebBrowser if we're in a React Native environment
   if (Platform.OS !== 'web') {
     WebBrowser.maybeCompleteAuthSession();
     webBrowserAvailable = true;
@@ -44,24 +43,7 @@ export function OAuthButton({ strategy, children, hideText, scheme }: Props) {
   // @ts-ignore
   const environment = clerk.__unstable__environment as EnvironmentResource;
   
-  React.useEffect(() => {
-    if (Platform.OS !== "android" || !webBrowserAvailable) return;
-
-    try {
-      void WebBrowser.warmUpAsync();
-      return () => {
-        if (Platform.OS !== "android" || !webBrowserAvailable) return;
-        try {
-          void WebBrowser.coolDownAsync();
-        } catch (error) {
-          console.warn('WebBrowser cooldown failed:', error);
-        }
-      };
-    } catch (error) {
-      console.warn('WebBrowser warmup failed:', error);
-      return undefined;
-    }
-  }, []);
+  // Removed warmUpAsync/coolDownAsync to avoid activity lifecycle crashes on Android
 
   const { startOAuthFlow } = useOAuth({ strategy });
 
@@ -72,9 +54,8 @@ export function OAuthButton({ strategy, children, hideText, scheme }: Props) {
     }
     
     try {
-      const { createdSessionId, setActive } = await startOAuthFlow({
-        redirectUrl: Linking.createURL("", { scheme: scheme }),
-      });
+      const redirectUrl = Linking.createURL("/oauth-callback", { scheme });
+      const { createdSessionId, setActive } = await startOAuthFlow({ redirectUrl });
 
       if (createdSessionId && setActive) {
         await setActive({ session: createdSessionId });
