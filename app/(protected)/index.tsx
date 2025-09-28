@@ -1,11 +1,7 @@
-import SignOutButton from "@/components/clerk/SignOutButton";
-import { Text, View } from "react-native";
+import SessionScreen from "@/components/screens/SessionScreen";
 
 export default function Index() {
   return (
-    <View>
-      <Text>Hello World</Text>
-      <SignOutButton/>
-    </View>
+    <SessionScreen/>
   )
 }
