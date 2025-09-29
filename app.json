@@ -23,7 +23,7 @@
       "package": "com.bobak.aipreacher"
     },
     "web": {
-      "output": "static",
+      "output": "server",
       "favicon": "./assets/images/icon.png"
     },
     "plugins": [
