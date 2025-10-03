@@ -1,13 +1,19 @@
+import { appwriteConfig, database } from '@/utils/appwrite'
 import { ConversationResponse } from '@/utils/types'
+import { useUser } from '@clerk/clerk-expo'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import React, { useEffect, useState } from 'react'
 import { ScrollView, StyleSheet, Text, View } from 'react-native'
+import { ID } from 'react-native-appwrite'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import Button from '../Button'
 import Gradient from '../gradient'
 
 export default function SummaryScreen() {
     const { conversationId } = useLocalSearchParams()
     const [ conversation, setConversation ] = useState<ConversationResponse>()
+    const { user } = useUser();
+    const [ isSaving, setIsSaving ] = useState(false);
 
     const router = useRouter();
 
@@ -26,8 +32,29 @@ export default function SummaryScreen() {
 
     console.log('conversation', JSON.stringify(conversation, null, 2));
 
+    async function saveAndContinue() {
+        try {
+            setIsSaving(true);
+            await database.createDocument(appwriteConfig.db, appwriteConfig.table.session, ID.unique(), {
+                userId: user?.id,
+                convId: conversationId,
+                status: conversation?.status,
+                tokens: conversation?.metadata.cost,
+                callDurationSecs: conversation?.metadata.call_duration_secs,
+                callSummaryTitle: conversation?.analysis.call_summary_title,
+                transcript: conversation?.transcript.map((t) => t.message).join('\n'),
+            });
+
+            router.dismissAll();
+        } catch (error) {
+            console.error('Error saving and continuing:', error);
+        } finally {
+            setIsSaving(false);
+        }
+    }
+
   return (
-    <>
+    <SafeAreaView>
     <Gradient position="bottom" isSpeaking={false} />
     <ScrollView
         contentInsetAdjustmentBehavior='automatic'
@@ -50,7 +77,6 @@ export default function SummaryScreen() {
                 <View style={{ gap: 16, paddingBottom: 16}}>
                     <Text style={styles.title}>{ conversation?.analysis.call_summary_title }</Text>
                     <Text style={styles.subtitle}>{ conversation?.analysis.transcript_summary.trim() }</Text>
-
                     <Text style={styles.title}>Stats</Text>
                     <Text style={styles.subtitle}>{ conversation?.metadata.call_duration_secs } seconds</Text>
                     {/* tokens used */}
@@ -64,11 +90,11 @@ export default function SummaryScreen() {
             )
         }
         <View style={{ alignItems: "center"}}>
-            <Button onPress={() => router.dismissAll()}>Save and continue</Button>
+            <Button onPress={() => saveAndContinue()} disabled={isSaving}>{ isSaving ? 'Saving...' : 'Save and continue' }</Button>
         </View>
 
     </ScrollView>
-    </>
+    </SafeAreaView>
   )
 }
 
